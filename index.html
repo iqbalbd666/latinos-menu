@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latino's Menu - Delicious Food & Specials</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #121212; color: #f5f5f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .gold-text { color: #e5a93c; }
+        .gold-bg { background-color: #e5a93c; color: #121212; }
+        .card-bg { background-color: #1e1e1e; border: 1px solid #333; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-black/90 sticky top-0 z-40 border-b border-yellow-600/30 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-wider gold-text">LATINO'S MENU</h1>
+                <p class="text-xs text-gray-400">Freshly Prepared • Great Taste</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <a id="googleReviewBtn" href="https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review" target="_blank" 
+                   class="bg-white text-black hover:bg-gray-200 px-3 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition shadow">
+                    <i class="fab fa-google text-red-500"></i>
+                    <span>Review Us</span>
+                </a>
+
+                <button onclick="toggleAdminModal()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg text-sm border border-gray-600 transition">
+                    <i class="fas fa-cog"></i> Manage
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Special Offer Banner Section -->
+    <section id="specialBannerSection" class="max-w-6xl mx-auto px-4 pt-6">
+        <div class="relative rounded-2xl overflow-hidden border border-yellow-500/40 shadow-2xl bg-gradient-to-r from-yellow-900/40 to-black">
+            <img id="specialBannerImg" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80" 
+                 alt="Today's Special" class="w-full h-48 md:h-64 object-cover opacity-75">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6">
+                <span class="gold-bg text-xs font-bold uppercase px-3 py-1 rounded-full w-max mb-2">🔥 Today's Special</span>
+                <h2 id="specialBannerTitle" class="text-2xl md:text-3xl font-bold text-white">Monster Pizza Deal - R243</h2>
+                <p id="specialBannerDesc" class="text-gray-300 text-sm md:text-base">Get 2x Monster Deals for just R396! Limited time offer.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search & Category Filter -->
+    <section class="max-w-6xl mx-auto px-4 py-6 w-full">
+        <div class="relative mb-5">
+            <i class="fas fa-search absolute left-4 top-3.5 text-gray-400"></i>
+            <input type="text" id="searchInput" onkeyup="filterMenu()" placeholder="Search your favorite dish (e.g., Pasta, Burger, Margherita, Chips)..." 
+                   class="w-full bg-[#1e1e1e] text-white pl-11 pr-4 py-3 rounded-xl border border-gray-700 focus:outline-none focus:border-yellow-500">
+        </div>
+
+        <div id="categoryTabs" class="flex gap-2 overflow-x-auto no-scrollbar pb-2"></div>
+    </section>
+
+    <!-- Menu Items Grid -->
+    <main class="max-w-6xl mx-auto px-4 pb-16 flex-grow w-full">
+        <div id="menuContainer" class="space-y-10"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-800 py-8 text-center text-gray-400 text-sm">
+        <div class="max-w-4xl mx-auto px-4 space-y-4">
+            <h3 class="text-lg font-bold text-white">Enjoyed our food?</h3>
+            <p>Your feedback helps us serve you better! Leave us a review on Google.</p>
+            <a id="footerGoogleLink" href="https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review" target="_blank"
+               class="inline-flex items-center gap-2 gold-bg font-bold px-6 py-2.5 rounded-full hover:opacity-90 transition">
+                <i class="fas fa-star"></i> Rate Us on Google
+            </a>
+            <p class="pt-4 text-xs text-gray-600">© 2026 Latino's Menu. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#1e1e1e] border border-gray-700 rounded-2xl max-w-2xl w-full p-6 space-y-6 my-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                <h2 class="text-xl font-bold gold-text"><i class="fas fa-tools mr-2"></i>Website Manager (Admin)</h2>
+                <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+
+            <div class="space-y-3 bg-black/40 p-4 rounded-xl border border-gray-800">
+                <h3 class="font-semibold text-yellow-400">1. Update Special Offer & Upload Photo</h3>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Upload Special Image (from Phone/PC)</label>
+                    <input type="file" id="specialImageInput" accept="image/*" onchange="previewSpecialImage(event)" 
+                           class="w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-600 file:text-black file:font-semibold hover:file:bg-yellow-500">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" id="adminSpecialTitle" placeholder="Special Title (e.g., Weekend Combo)" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
+                    <input type="text" id="adminSpecialDesc" placeholder="Description & Price" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
+                </div>
+                <button onclick="saveSpecialBanner()" class="gold-bg px-4 py-2 rounded-lg text-sm font-bold">Save Special Offer</button>
+            </div>
+
+            <div class="space-y-3 bg-black/40 p-4 rounded-xl border border-gray-800">
+                <h3 class="font-semibold text-yellow-400">2. Add New Menu Item</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <select id="newItemCategory" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"></select>
+                    <input type="text" id="newItemName" placeholder="Item Name (e.g., Chicken Tikka)" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
+                    <input type="text" id="newItemPrice" placeholder="Price (e.g., R85)" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
+                </div>
+                <button onclick="addNewMenuItem()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold">+ Add Item to Menu</button>
+            </div>
+
+            <div class="space-y-3 bg-black/40 p-4 rounded-xl border border-gray-800">
+                <h3 class="font-semibold text-yellow-400">3. Google Review Link</h3>
+                <div class="flex gap-2">
+                    <input type="text" id="adminGoogleLink" placeholder="Paste your Google Review URL here" class="flex-grow bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white">
+                    <button onclick="saveGoogleLink()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold">Update Link</button>
+                </div>
+            </div>
+
+            <div class="space-y-2 bg-yellow-900/20 p-4 rounded-xl border border-yellow-600/40">
+                <h3 class="font-semibold text-yellow-400">4. Make Changes Permanent (For All Customers)</h3>
+                <p class="text-xs text-gray-300">After adding items or uploading a photo, click below to download the updated <b>index.html</b> file and upload it to GitHub/Netlify.</p>
+                <button onclick="exportUpdatedHTML()" class="w-full bg-white text-black font-bold py-2.5 rounded-lg hover:bg-gray-200 transition">
+                    <i class="fas fa-download mr-2"></i> Download Updated index.html
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultMenuData = [
+            {
+                category: "PASTA",
+                items: [
+                    { name: "Penne Di Pollo", price: "R106" },
+                    { name: "Arrabiata", price: "R74" },
+                    { name: "Peri-Peri Chicken", price: "R85" },
+                    { name: "Bolognese", price: "R92" },
+                    { name: "Seafood Cream", price: "R110" },
+                    { name: "Alfredo", price: "R107" },
+                    { name: "Capricciosa", price: "R87" },
+                    { name: "Spinach", price: "R99" },
+                    { name: "Mexican Bolognese", price: "R87" },
+                    { name: "Creamy Peppadew", price: "R86" },
+                    { name: "Carbonara", price: "R88" },
+                    { name: "Chicken Lasagne", price: "R104" },
+                    { name: "Beef Lasagne", price: "R110" }
+                ]
+            },
+            {
+                category: "STARTERS",
+                items: [
+                    { name: "Garlic Focaccia", price: "R60" },
+                    { name: "Cheese Focaccia", price: "R69" },
+                    { name: "Crumbed Mushrooms", price: "R67" },
+                    { name: "Oven Baked Mushrooms", price: "R55" },
+                    { name: "Buffalo Wings 4", price: "R55" },
+                    { name: "Buffalo Wings 8", price: "R91" },
+                    { name: "Buffalo Wings 12", price: "R136" },
+                    { name: "Buffalo Wings 24", price: "R211" }
+                ]
+            },
+            {
+                category: "SALADS",
+                items: [
+                    { name: "Nicoise Salad", price: "R74" },
+                    { name: "Chicken & Avo", price: "R72" },
+                    { name: "Italian Salad", price: "R65" },
+                    { name: "Chef's Salad", price: "R78" },
+                    { name: "Prawn & Avo", price: "R85" },
+                    { name: "Biltong Salad", price: "R81" },
+                    { name: "Tropical Chicken", price: "R81" },
+                    { name: "Halloumi & Avo", price: "R82" },
+                    { name: "Greek", price: "R71" }
+                ]
+            },
+            {
+                category: "SUBS & ROLLS",
+                items: [
+                    { name: "Spare Rib", price: "R90" },
+                    { name: "Fillet Prego Roll", price: "R85" },
+                    { name: "Chicken Prego", price: "R91" },
+                    { name: "Chicken Mayo Roll", price: "R65" },
+                    { name: "Peri-Peri Chicken Livers", price: "R90" }
+                ]
+            },
+            {
+                category: "MAIN MEALS",
+                items: [
+                    { name: "Full Chicken", price: "R145" },
+                    { name: "Grilled Ribs 500g", price: "R144" },
+                    { name: "Chicken Cordon Bleu", price: "R118" },
+                    { name: "T-Bone Steak 350g", price: "R117" },
+                    { name: "Rump Steak 350g", price: "R137" },
+                    { name: "Chicken Schnitzel", price: "R131" },
+                    { name: "Trinchado Fillet", price: "R148" }
+                ]
+            },
+            {
+                category: "BURGERS",
+                items: [
+                    { name: "Plain Beef Burger", price: "R61" },
+                    { name: "Hawaiian Burger", price: "R64" },
+                    { name: "Cheese Burger", price: "R61" },
+                    { name: "Hawaiian Cheese Burger", price: "R70" },
+                    { name: "Chilli Burger (Dbl)", price: "R70" },
+                    { name: "Cheese Burger (Dbl)", price: "R76" },
+                    { name: "Avo Burger", price: "R78" },
+                    { name: "Rib Burger", price: "R85" },
+                    { name: "Cheesy Buster", price: "R95" },
+                    { name: "Chicken Burger", price: "R71" },
+                    { name: "Chicken Burger (Dbl)", price: "R82" },
+                    { name: "Chicken Cheese (Dbl)", price: "R91" },
+                    { name: "Cheese & Steak", price: "R91" },
+                    { name: "Triple Cheese Burger", price: "R87" },
+                    { name: "Mushroom Cheese (Dbl)", price: "R91" },
+                    { name: "Bacon & Cheese", price: "R86" },
+                    { name: "Rib & Cheese", price: "R93" },
+                    { name: "Bacon, Cheese & Rib", price: "R99" }
+                ]
+            },
+            {
+                category: "PIZZA (Standard / Large)",
+                items: [
+                    { name: "Margherita", price: "R74 / R91" },
+                    { name: "Palermo", price: "R95 / R108" },
+                    { name: "Vegetarian", price: "R77 / R91" },
+                    { name: "Cheesy Supreme", price: "R90 / R105" },
+                    { name: "Porky", price: "R99 / R109" },
+                    { name: "Buona", price: "R110 / R123" },
+                    { name: "Hawaiian", price: "R102 / R117" },
+                    { name: "Hawaiian Twist", price: "R103 / R133" },
+                    { name: "Regina", price: "R100 / R120" },
+                    { name: "Meat Carnival", price: "R108 / R129" },
+                    { name: "Mexicana", price: "R102 / R114" },
+                    { name: "Chicken & Mushroom", price: "R103 / R115" },
+                    { name: "Sweet Chilli Chicken", price: "R95 / R116" },
+                    { name: "Chicken BBQ", price: "R98 / R116" },
+                    { name: "Rib & Mushroom", price: "R109 / R131" },
+                    { name: "La Quatro", price: "R99 / R118" },
+                    { name: "Caribbean", price: "R106 / R116" },
+                    { name: "Tropicana", price: "R99 / R109" },
+                    { name: "Chicken Mayo", price: "R103 / R117" },
+                    { name: "Portuguese Chicken", price: "R100 / R121" },
+                    { name: "Sicilian", price: "R107 / R117" },
+                    { name: "Four Season", price: "R105 / R118" },
+                    { name: "Pescatore", price: "R115 / R138" },
+                    { name: "Pepperoni Festival", price: "R108 / R129" },
+                    { name: "BBQ Chicken Bacon", price: "R102 / R118" },
+                    { name: "Chicken Supreme", price: "R97 / R110" },
+                    { name: "La Roma", price: "R102 / R111" },
+                    { name: "The Hotty Beef", price: "R110 / R130" },
+                    { name: "Juicy Russian", price: "R85 / R108" },
+                    { name: "Fresco", price: "R103 / R114" },
+                    { name: "Italian Classic", price: "R105 / R122" },
+                    { name: "La-Meaty", price: "R110 / R136" },
+                    { name: "Rib & Pine", price: "R107 / R117" },
+                    { name: "Summer Love", price: "R103 / R118" },
+                    { name: "Sweet & Sour Pork", price: "R106 / R115" },
+                    { name: "Italiano", price: "R101 / R117" },
+                    { name: "Hot Pepperoni", price: "R108 / R121" },
+                    { name: "Chicken Trinchado", price: "R99 / R114" },
+                    { name: "Roma Fillet", price: "R106 / R122" },
+                    { name: "Pomodori", price: "R107 / R134" },
+                    { name: "Supreme", price: "R105 / R123" },
+                    { name: "La Chef", price: "R109 / R124" },
+                    { name: "Sweet & Sour Chicken", price: "R103 / R115" },
+                    { name: "Chiattona", price: "R116 / R126" },
+                    { name: "Bolero", price: "R91 / R108" },
+                    { name: "Monster Deal", price: "R243" },
+                    { name: "2x Monster Deal", price: "R396" }
+                ]
+            },
+            {
+                category: "EXTRA TOPPINGS",
+                items: [
+                    { name: "Cheese / Meat / Avo", price: "R30 / R40" },
+                    { name: "Veggies", price: "R27 / R33" },
+                    { name: "Sauces", price: "R19 / R24" }
+                ]
+            },
+            {
+                category: "SANDWICHES",
+                items: [
+                    { name: "Ham & Cheese", price: "R34" },
+                    { name: "Ham Cheese & Tomato", price: "R40" },
+                    { name: "Chicken & Mushroom", price: "R44" },
+                    { name: "Roast Beef & Tomato", price: "R53" },
+                    { name: "Ham, Egg & Cheese", price: "R45" },
+                    { name: "Ham & Avo", price: "R47" },
+                    { name: "Chicken Mayonnaise", price: "R44" },
+                    { name: "Spinach & Mushroom", price: "R45" },
+                    { name: "Bacon & Cheese", price: "R45" },
+                    { name: "Bacon, Mushroom & Feta", price: "R50" },
+                    { name: "Bacon & Avo", price: "R47" },
+                    { name: "Beef & Mushroom", price: "R61" },
+                    { name: "Mushroom, Feta & Olive", price: "R45" },
+                    { name: "Bacon & Mushroom", price: "R59" },
+                    { name: "Bacon & Egg", price: "R45" },
+                    { name: "Chicken Tikka", price: "R37" }
+                ]
+            },
+            {
+                category: "TRAMEZZINI",
+                items: [
+                    { name: "Juicy Russian", price: "R70" },
+                    { name: "Spinach & Feta", price: "R60" },
+                    { name: "Chicken Mayo & Pine", price: "R84" },
+                    { name: "Curry Chicken & Avo", price: "R68" },
+                    { name: "Chicken Mayonnaise", price: "R74" },
+                    { name: "Mushroom & Spinach", price: "R55" },
+                    { name: "Bacon & Cheese", price: "R67" },
+                    { name: "Bacon, Mushroom & Feta", price: "R85" },
+                    { name: "Bacon, Feta & Peppadew", price: "R64" },
+                    { name: "Beef & Mushroom", price: "R78" },
+                    { name: "Mushroom, Feta & Olive", price: "R60" },
+                    { name: "Bacon & Mushroom", price: "R69" },
+                    { name: "Bacon & Egg", price: "R58" },
+                    { name: "Curry Chicken & Banana", price: "R63" },
+                    { name: "Steak & Avo", price: "R87" },
+                    { name: "Bacon, Feta & Avo", price: "R79" }
+                ]
+            },
+            {
+                category: "KIDDIES (UNDER 12)",
+                items: [
+                    { name: "Kiddies Pizza Ham & Cheese", price: "R45" },
+                    { name: "Bacon & Banana Pizza", price: "R39" },
+                    { name: "Ham & Mushroom Pizza", price: "R41" },
+                    { name: "Ham & Pine Pizza", price: "R48" },
+                    { name: "Fish Fingers & Chips", price: "R34" },
+                    { name: "Chicken Nuggets & Chips", price: "R37" },
+                    { name: "Burger Meal", price: "R60" }
+                ]
+            },
+            {
+                category: "SPECIALS & COMBOS",
+                items: [
+                    { name: "1x Large Cheese Russian + 1x MDM Fish + 1x Large Vienna + 1x Fish Cake", price: "R162" },
+                    { name: "4x Fish Finger with Chips", price: "R35" },
+                    { name: "Large Cheese Grilla with Chips", price: "R49" },
+                    { name: "Large Russian Chips", price: "R47" },
+                    { name: "Medium Beef Russian with Chips", price: "R38" },
+                    { name: "3x Buffalo Wings with Chips", price: "R42" },
+                    { name: "4x Chicken Strips & Chips", price: "R44" },
+                    { name: "1 Small Fish, 1 Small Russian & Chips", price: "R58" },
+                    { name: "Small Chips + 1x MDM Russian + 1x Large Vienna + 1x Small Fish + 1x 2LTR Coke", price: "R140" },
+                    { name: "5x MDM Russian with Extra Family Chips", price: "R218" },
+                    { name: "5x Large Russians with Extra Family Chips", price: "R240" },
+                    { name: "PIZZA COMBO: Sweet Chilli Chicken Large OR Chicken BBQ Large + 5x Cheese Griller & Extra Family Chips", price: "R355" },
+                    { name: "5x Large Russians with Large Chips", price: "R210" },
+                    { name: "5x MDM Russian with Large Chips", price: "R190" },
+                    { name: "5x Large Cheese Grilla with Extra Family Chips", price: "R250" },
+                    { name: "5x Large Cheese Grilla with Large Chips", price: "R225" },
+                    { name: "5x Large Cheese Grilla with Family Chips", price: "R230" },
+                    { name: "5x Medium Cheese Grilla with Extra Family Chips", price: "R230" },
+                    { name: "5x Medium Cheese Grilla with Large Chips", price: "R200" },
+                    { name: "5x Large Vienna with Large Chips", price: "R172" },
+                    { name: "5x Large Cheese Vienna with Large Chips", price: "R180" },
+                    { name: "5x Large Vienna with Extra Family Chips", price: "R195" },
+                    { name: "5x Medium Vienna with Extra Family Chips", price: "R160" },
+                    { name: "5x Large Cheese Vienna with Extra Family Chips", price: "R205" },
+                    { name: "5x Medium Vienna with Large Chips", price: "R135" },
+                    { name: "Large Chips + 2x Small Russian + 1x Small Fish + 1x 1.2 LTR Coke", price: "R132" }
+                ]
+            },
+            {
+                category: "FRIED CHIPS & SIDES",
+                items: [
+                    { name: "Small Russian with Chips", price: "R32" },
+                    { name: "Small Vienna with Chips", price: "R22" },
+                    { name: "Chicken Schnitzel with Chips", price: "R28" },
+                    { name: "Mini Chips", price: "R26" },
+                    { name: "Small Fish with Chips", price: "R35" },
+                    { name: "Small Chips", price: "R36" },
+                    { name: "Small Chips & 1x Large Russian", price: "R90" },
+                    { name: "Medium Chips", price: "R46" },
+                    { name: "5x Nuggets with Chips", price: "R35" },
+                    { name: "T-Bone 500g with Chips", price: "R145" },
+                    { name: "Large Chips", price: "R56" },
+                    { name: "Family Size Chips", price: "R72" },
+                    { name: "T-Bone 350g with Chips", price: "R105" },
+                    { name: "Extra Family Size Chips", price: "R82" },
+                    { name: "Medium Cheese Grilla with Chips", price: "R45" },
+                    { name: "Medium Russian with Chips", price: "R43" },
+                    { name: "1 Large Vienna with Chips", price: "R42" },
+                    { name: "1 Large Cheese Vienna with Chips", price: "R42" },
+                    { name: "1 Large Fish with Chips", price: "R65" },
+                    { name: "1 Medium Fish with Chips", price: "R53" },
+                    { name: "1 Medium Vienna with Chips", price: "R32" }
+                ]
+            },
+            {
+                category: "ADDITIONAL ITEMS",
+                items: [
+                    { name: "Medium Russian", price: "R29" },
+                    { name: "Large Russian", price: "R33" },
+                    { name: "Large Cheese Grilla", price: "R35" },
+                    { name: "Beef Russian", price: "R23" },
+                    { name: "Small Fish", price: "R25" },
+                    { name: "Medium Fish", price: "R40" },
+                    { name: "Large Fish", price: "R55" },
+                    { name: "Fish Cake", price: "R25" },
+                    { name: "The Pie", price: "R24" },
+                    { name: "Medium Vienna", price: "R17" },
+                    { name: "Large Vienna", price: "R25" }
+                ]
+            }
+        ];
+
+        let menuData = JSON.parse(localStorage.getItem('latinosMenuData')) || defaultMenuData;
+        let selectedCategory = "ALL";
+        let tempUploadedImage = "";
+
+        function init() {
+            const savedSpecial = JSON.parse(localStorage.getItem('latinosSpecial'));
+            if (savedSpecial) {
+                if (savedSpecial.img) document.getElementById('specialBannerImg').src = savedSpecial.img;
+                if (savedSpecial.title) document.getElementById('specialBannerTitle').innerText = savedSpecial.title;
+                if (savedSpecial.desc) document.getElementById('specialBannerDesc').innerText = savedSpecial.desc;
+            }
+
+            const savedGoogleLink = localStorage.getItem('latinosGoogleLink');
+            if (savedGoogleLink) {
+                document.getElementById('googleReviewBtn').href = savedGoogleLink;
+                document.getElementById('footerGoogleLink').href = savedGoogleLink;
+            }
+
+            renderCategories();
+            renderMenu();
+        }
+
+        function renderCategories() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            const selectDropdown = document.getElementById('newItemCategory');
+            
+            let tabsHTML = `<button onclick="selectCategory('ALL')" class="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition ${selectedCategory === 'ALL' ? 'gold-bg' : 'bg-[#1e1e1e] text-gray-300 border border-gray-700 hover:border-yellow-500'}">ALL ITEMS</button>`;
+            let optionsHTML = "";
+
+            menuData.forEach(cat => {
+                const isActive = selectedCategory === cat.category;
+                tabsHTML += `<button onclick="selectCategory('${cat.category}')" class="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition ${isActive ? 'gold-bg' : 'bg-[#1e1e1e] text-gray-300 border border-gray-700 hover:border-yellow-500'}">${cat.category}</button>`;
+                optionsHTML += `<option value="${cat.category}">${cat.category}</option>`;
+            });
+
+            tabsContainer.innerHTML = tabsHTML;
+            selectDropdown.innerHTML = optionsHTML;
+        }
+
+        function selectCategory(cat) {
+            selectedCategory = cat;
+            renderCategories();
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menuContainer');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let html = "";
+
+            menuData.forEach(cat => {
+                if (selectedCategory !== "ALL" && selectedCategory !== cat.category) return;
+
+                const filteredItems = cat.items.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) || 
+                    cat.category.toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredItems.length === 0) return;
+
+                html += `
+                    <section>
+                        <div class="flex items-center gap-3 mb-4 border-b border-yellow-600/30 pb-2">
+                            <h2 class="text-xl md:text-2xl font-bold gold-text tracking-wide">${cat.category}</h2>
+                            <span class="text-xs bg-gray-800 text-gray-400 px-2.5 py-0.5 rounded-full">${filteredItems.length}</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            ${filteredItems.map(item => `
+                                <div class="card-bg p-4 rounded-xl flex justify-between items-center hover:border-yellow-500/60 transition">
+                                    <span class="font-medium text-gray-100 pr-3">${item.name}</span>
+                                    <span class="bg-white text-black font-bold px-3 py-1 rounded-full text-sm whitespace-nowrap shadow">${item.price}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </section>
+                `;
+            });
+
+            container.innerHTML = html || `<div class="text-center py-12 text-gray-400">No items found matching "${searchTerm}"</div>`;
+        }
+
+        function filterMenu() {
+            renderMenu();
+        }
+
+        function toggleAdminModal() {
+            const modal = document.getElementById('adminModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function previewSpecialImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tempUploadedImage = e.target.result;
+                document.getElementById('specialBannerImg').src = tempUploadedImage;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveSpecialBanner() {
+            const title = document.getElementById('adminSpecialTitle').value || document.getElementById('specialBannerTitle').innerText;
+            const desc = document.getElementById('adminSpecialDesc').value || document.getElementById('specialBannerDesc').innerText;
+            const img = tempUploadedImage || document.getElementById('specialBannerImg').src;
+
+            document.getElementById('specialBannerTitle').innerText = title;
+            document.getElementById('specialBannerDesc').innerText = desc;
+
+            localStorage.setItem('latinosSpecial', JSON.stringify({ title, desc, img }));
+            alert("Special offer updated on screen! Click 'Download Updated index.html' to publish permanently.");
+        }
+
+        function addNewMenuItem() {
+            const catName = document.getElementById('newItemCategory').value;
+            const name = document.getElementById('newItemName').value.trim();
+            const price = document.getElementById('newItemPrice').value.trim();
+
+            if (!name || !price) {
+                alert("Please enter both item name and price.");
+                return;
+            }
+
+            const categoryObj = menuData.find(c => c.category === catName);
+            if (categoryObj) {
+                categoryObj.items.push({ name, price });
+                localStorage.setItem('latinosMenuData', JSON.stringify(menuData));
+                renderMenu();
+                document.getElementById('newItemName').value = "";
+                document.getElementById('newItemPrice').value = "";
+                alert(`${name} (${price}) added to ${catName}!`);
+            }
+        }
+
+        function saveGoogleLink() {
+            const link = document.getElementById('adminGoogleLink').value.trim();
+            if (!link) return;
+            localStorage.setItem('latinosGoogleLink', link);
+            document.getElementById('googleReviewBtn').href = link;
+            document.getElementById('footerGoogleLink').href = link;
+            alert("Google Review link updated!");
+        }
+
+        function exportUpdatedHTML() {
+            let currentHTML = document.documentElement.outerHTML;
+            const updatedDataString = `const defaultMenuData = ${JSON.stringify(menuData, null, 4)};`;
+            currentHTML = currentHTML.replace(/const defaultMenuData = \[[\s\S]*?\];/, updatedDataString);
+
+            const blob = new Blob(["<!DOCTYPE html>
+" + currentHTML], { type: "text/html" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "index.html";
+            a.click();
+        }
+
+        init();
+    </script>
+</body>
+</html>
